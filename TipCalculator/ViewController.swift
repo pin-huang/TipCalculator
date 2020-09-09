@@ -42,31 +42,36 @@ class ViewController: UIViewController {
     // 顯示 小費 % 。將元件 UI Slider 所對應的數值，顯示在 元件 UI Label (showTipPercentage) 上，並執行計算
     @IBAction func setTipPercentage(_ sender: UISlider) {
         showTipPercentage.text = "\(Int(sender.value))"
-        calculation()
+        if AmountTextField.text != nil {
+            calculation()
+            }
         }
     
     // 顯示 分攤人數。將元件 UI Slider 所對應的數值，顯示在 元件 UI Label (showShare) 上，並執行計算
     @IBAction func setShare(_ sender: UISlider) {
         showShare.text = "\(Int(sender.value))"
-        calculation()
-            
+        if AmountTextField.text != nil {
+            calculation()
+            }
         }
     
     func calculation() {
         
-        let billAmount = Double(AmountTextField.text!) ?? 0 // 為了避免使用者未輸入餐費前 (AmountTextField 無值) 就動到 元件 UI Slider ，而造成 app 閃退，這裡先給一個預設值 (0)
-        let tipPercentage = Double(showTipPercentage.text!) ?? 10 // 為了避免使用者未輸入餐費前 (AmountTextField 無值) 就動到 元件 UI Slider ，而造成 app 閃退，這裡先給一個預設值 (10)
+        let billAmount = Double(AmountTextField.text!)  // 為了避免使用者未輸入餐費前 (AmountTextField 無值) 就動到 元件 UI Slider ，而造成 app 閃退，也可以在這行後面加上 ?? 0 先給 AmountTextField.text 一個預設值 (0)。但這裡我是要練習 optional binding ，所以就不給預設值了。
+        let tipPercentage = Double(showTipPercentage.text!)
         let share = Double(showShare.text!)
             
         // 將上面幾個常數 (billAmount, tipPercentage, share) 都宣告成 浮點數，之後就可以來計算 totalCost (分攤後總金額)
-        let totalCost = (billAmount * tipPercentage / 100 + billAmount) / (share!)
+        // 用 optinal binding 來判斷 billAmount (AmountTextField.text) 是否有值，可避免因使用者無輸入 AmountTextField，造成 app 閃退
+        if billAmount != nil, tipPercentage != nil, share != nil {
+            let totalCost = (billAmount! * tipPercentage! / 100 + billAmount!) / (share!)
 
-        let TipLabelvalue = billAmount * tipPercentage / 100 // 計算小費的公式
+            let TipLabelvalue = billAmount! * tipPercentage! / 100 // 計算小費的公式
     
-        TipLabel.text = String(format:"%.2f", TipLabelvalue) // 取小數點兩位後，顯示 小費金額 在 元件 UI Label (TipLabel)
-        TotalLabel.text = String(format:"%.2f", totalCost) // 取小數點兩位，顯示 分攤金額 在 元件 UI Label (TotalLabel)
-                   
-    }
+            TipLabel.text = String(format:"%.2f", TipLabelvalue) // 取小數點兩位後，顯示 小費金額 在 元件 UI Label (TipLabel)
+            TotalLabel.text = String(format:"%.2f", totalCost) // 取小數點兩位，顯示 分攤金額 在 元件 UI Label (TotalLabel)
+            }
+        }
     
 }
 
